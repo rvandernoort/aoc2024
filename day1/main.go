@@ -21,23 +21,31 @@ func Part1(left []uint64, right []uint64) uint64 {
 	return difference
 }
 
-func occurrences(nums []uint64, target uint64) uint64 {
-	count := uint64(0)
-
+func Occurences(nums []uint64, target uint64) uint64 {
+	frequencyMap := make(map[uint64]uint64)
 	for _, num := range nums {
-		if num == target {
-			count++
-		}
+		frequencyMap[num]++
 	}
-
-	return count
+	return frequencyMap[target]
 }
+
+// func Occurrences(nums []uint64, target uint64) uint64 {
+// 	count := uint64(0)
+
+// 	for _, num := range nums {
+// 		if num == target {
+// 			count++
+// 		}
+// 	}
+
+// 	return count
+// }
 
 func Part2(left, right []uint64) uint64 {
 	similarity := uint64(0)
 
 	for _, num := range left {
-		occurrences := occurrences(right, num)
+		occurrences := Occurences(right, num)
 		similarity += num * occurrences
 	}
 
