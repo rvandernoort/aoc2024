@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"sort"
+	"slices"
 
 	"rovervandernoort.nl/framework"
 )
@@ -17,12 +17,8 @@ func absDiffUint(x, y uint64) uint64 {
 func Part1(left []uint64, right []uint64) uint64 {
 	difference := uint64(0)
 
-	sort.Slice(left, func(i, j int) bool {
-		return left[i] < left[j]
-	})
-	sort.Slice(right, func(i, j int) bool {
-		return right[i] < right[j]
-	})
+	slices.Sort(left)
+	slices.Sort(right)
 
 	for i := 0; i < len(left); i++ {
 		difference += absDiffUint(left[i], right[i])
