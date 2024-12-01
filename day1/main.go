@@ -8,13 +8,6 @@ import (
 	"rovervandernoort.nl/framework"
 )
 
-func absDiffUint(x, y uint64) uint64 {
-	if x < y {
-		return y - x
-	}
-	return x - y
-}
-
 func Part1(left []uint64, right []uint64) uint64 {
 	difference := uint64(0)
 
@@ -22,7 +15,7 @@ func Part1(left []uint64, right []uint64) uint64 {
 	slices.Sort(right)
 
 	for i := 0; i < len(left); i++ {
-		difference += absDiffUint(left[i], right[i])
+		difference += framework.AbsDiffUint(left[i], right[i])
 	}
 
 	return difference
