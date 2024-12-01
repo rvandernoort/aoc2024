@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"rovervandernoort.nl/framework"
 )
@@ -22,10 +23,15 @@ func main() {
 	target := uint64(2020)
 
 	fmt.Printf("-----\nPart 1\n")
+	start := time.Now()
 	product := Part1(nums, target)
+	fmt.Printf("time: %v\n\n", time.Since(start))
 	fmt.Printf("output: %d\n", product)
 
 	fmt.Printf("-----\nPart 2\n")
+	start = time.Now()
 	product = Part2(nums, target)
+	fmt.Printf("time: %v\n\n", time.Since(start))
 	fmt.Printf("output: %d\n", product)
+
 }
