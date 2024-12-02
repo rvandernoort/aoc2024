@@ -6,3 +6,7 @@ func AbsDiffUint(x, y uint64) uint64 {
 	}
 	return x - y
 }
+
+func Remove(slice []uint64, s int) []uint64 {
+	return append(slice[:s], slice[s+1:]...)
+}

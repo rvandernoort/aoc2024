@@ -41,6 +41,22 @@ func ParseUints(input []string) []uint64 {
 	return result
 }
 
+func ParseReport(input []string) (result [][]uint64) {
+	for _, line := range input {
+		lineList := []uint64{}
+		for _, item := range strings.Split(line, " ") {
+			num, err := strconv.ParseUint(string(item), 10, 64)
+			if err != nil {
+				fmt.Printf("%s is not a number\n", line)
+				panic(err)
+			}
+			lineList = append(lineList, num)
+		}
+		result = append(result, lineList)
+	}
+	return
+}
+
 func ParseLists(input []string) ([]uint64, []uint64) {
 	var result []uint64
 	var result2 []uint64
