@@ -46,9 +46,9 @@ func Part1(input []string) uint64 {
 
 func Part2(input []string) uint64 {
 	muls := uint64(0)
+  enabled := true
 	for _, line := range input {
 		working := true
-		enabled := true
 		for working {
 			mulIndex := strings.Index(line, "mul(")
 			doIndex := strings.Index(line, "do()")
