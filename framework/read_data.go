@@ -79,3 +79,15 @@ func ParseLists(input []string) ([]uint64, []uint64) {
 	}
 	return result, result2
 }
+
+func ParseGrid(input []string) (grid [][]string) {
+	for _, line := range input {
+		lineGrid := []string{}
+		for _, letter := range line {
+			strLetter := string(letter)
+			lineGrid = append(lineGrid, strLetter)
+		}
+		grid = append(grid, lineGrid)
+	}
+	return
+}
