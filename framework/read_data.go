@@ -91,3 +91,41 @@ func ParseGrid(input []string) (grid [][]string) {
 	}
 	return
 }
+
+func ParsePages(input []string) (ordering map[uint64][]uint64, updates [][]uint64) {
+	ordering = make(map[uint64][]uint64)
+	part2 := false
+	for _, line := range input {
+		if line == "" {
+			part2 = true
+			continue
+		}
+		if !part2 {
+			rule := strings.Split(line, "|")
+			left, err := strconv.ParseUint(rule[0], 10, 64)
+			if err != nil {
+				fmt.Printf("%s is not a number\n", rule[0])
+				panic(err)
+			}
+			right, err := strconv.ParseUint(rule[1], 10, 64)
+			if err != nil {
+				fmt.Printf("%s is not a number\n", rule[1])
+				panic(err)
+			}
+			ordering[left] = append(ordering[left], right)
+		}
+		if part2 {
+			lineList := []uint64{}
+			for _, item := range strings.Split(line, ",") {
+				num, err := strconv.ParseUint(string(item), 10, 64)
+				if err != nil {
+					fmt.Printf("%s is not a number\n", line)
+					panic(err)
+				}
+				lineList = append(lineList, num)
+			}
+			updates = append(updates, lineList)
+		}
+	}
+	return
+}
