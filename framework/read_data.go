@@ -129,3 +129,22 @@ func ParsePages(input []string) (ordering map[uint64][]uint64, updates [][]uint6
 	}
 	return
 }
+
+type Tuple struct {
+	X int
+	Y int
+}
+
+func ParseAntennas(input []string) (map[string][]Tuple, int, int) {
+	antennas := make(map[string][]Tuple)
+	for i, line := range input {
+		for j, letter := range line {
+			strLetter := string(letter)
+			if strLetter == "." || strLetter == "#" {
+				continue
+			}
+			antennas[strLetter] = append(antennas[strLetter], Tuple{X: i, Y: j})
+		}
+	}
+	return antennas, len(input[0]), len(input)
+}
