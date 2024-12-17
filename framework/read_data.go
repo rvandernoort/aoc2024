@@ -178,3 +178,22 @@ func ParseEquations(input []string) []Equation {
 	return equations
 }
 
+func ParseRuneToInt(r rune) int {
+    return int(r - '0')
+}
+
+func ParseBlocks(input string) ([]int, []int, int) {
+	blocks := []int{}
+	empties := []int{}
+	length := 0
+	for i, line := range input {
+		num := ParseRuneToInt(line)
+		if i % 2 == 0 {
+			blocks = append(blocks, num)
+			length += num
+		} else {
+			empties = append(empties, num)
+		}
+	}
+	return blocks, empties, length
+}
