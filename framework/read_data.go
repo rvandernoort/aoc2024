@@ -148,3 +148,33 @@ func ParseAntennas(input []string) (map[string][]Tuple, int, int) {
 	}
 	return antennas, len(input[0]), len(input)
 }
+
+type Equation struct {
+	Result int
+	Numbers []int
+}
+
+func ParseEquations(input []string) []Equation {
+	equations := make([]Equation, 0)
+	for _, line := range input {
+		equation := strings.Split(line, ": ")
+		result, err := strconv.Atoi(equation[0])
+		if err != nil {
+			fmt.Printf("%s is not a number\n", equation[0])
+			panic(err)
+		}
+		numbers := strings.Split(equation[1], " ")
+		nums := []int{}
+		for _, num := range numbers {
+			numInt, err := strconv.Atoi(num)
+			if err != nil {
+				fmt.Printf("%s is not a number\n", num)
+				panic(err)
+			}
+			nums = append(nums, numInt)
+		}
+		equations = append(equations, Equation{Result: result, Numbers: nums})
+	}
+	return equations
+}
+
