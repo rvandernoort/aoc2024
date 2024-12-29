@@ -150,7 +150,7 @@ func ParseAntennas(input []string) (map[string][]Tuple, int, int) {
 }
 
 type Equation struct {
-	Result int
+	Result  int
 	Numbers []int
 }
 
@@ -179,21 +179,29 @@ func ParseEquations(input []string) []Equation {
 }
 
 func ParseRuneToInt(r rune) int {
-    return int(r - '0')
+	return int(r - '0')
 }
 
-func ParseBlocks(input string) ([]int, []int, int) {
-	blocks := []int{}
-	empties := []int{}
-	length := 0
-	for i, line := range input {
-		num := ParseRuneToInt(line)
-		if i % 2 == 0 {
-			blocks = append(blocks, num)
-			length += num
-		} else {
-			empties = append(empties, num)
-		}
+// func ParseBlocks(input string) ([]int, []int, int) {
+// 	blocks := []int{}
+// 	empties := []int{}
+// 	length := 0
+// 	for i, line := range input {
+// 		num := ParseRuneToInt(line)
+// 		if i % 2 == 0 {
+// 			blocks = append(blocks, num)
+// 			length += num
+// 		} else {
+// 			empties = append(empties, num)
+// 		}
+// 	}
+// 	return blocks, empties, length
+// }
+
+func ParseBlocks(input string) (output []int) {
+	for _, char := range input {
+		num := ParseRuneToInt(char)
+		output = append(output, num)
 	}
-	return blocks, empties, length
+	return
 }
