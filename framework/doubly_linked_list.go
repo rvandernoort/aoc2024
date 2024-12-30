@@ -1,23 +1,23 @@
 package framework
 
-type Node struct {
-	Value interface{}
-	Next  *Node
-	Prev  *Node
+type Node[T any] struct {
+	Value T
+	Next  *Node[T]
+	Prev  *Node[T]
 }
 
-type Deque struct {
-	head *Node
-	tail *Node
+type Deque[T any] struct {
+	head *Node[T]
+	tail *Node[T]
 	size int
 }
 
-func NewDeque() *Deque {
-	return &Deque{}
+func NewDeque[T any]() *Deque[T] {
+	return &Deque[T]{}
 }
 
-func (d *Deque) PushFront(value interface{}) {
-	node := &Node{Value: value}
+func (d *Deque[T]) PushFront(value T) {
+	node := &Node[T]{Value: value}
 	if d.head == nil {
 		d.head = node
 		d.tail = node
@@ -29,8 +29,8 @@ func (d *Deque) PushFront(value interface{}) {
 	d.size++
 }
 
-func (d *Deque) PushBack(value interface{}) {
-	node := &Node{Value: value}
+func (d *Deque[T]) PushBack(value T) {
+	node := &Node[T]{Value: value}
 	if d.tail == nil {
 		d.head = node
 		d.tail = node
@@ -42,9 +42,10 @@ func (d *Deque) PushBack(value interface{}) {
 	d.size++
 }
 
-func (d *Deque) PopFront() interface{} {
+func (d *Deque[T]) PopFront() (T, bool) {
 	if d.head == nil {
-		return nil
+		var zero T
+		return zero, false
 	}
 
 	value := d.head.Value
@@ -55,12 +56,13 @@ func (d *Deque) PopFront() interface{} {
 		d.head.Prev = nil
 	}
 	d.size--
-	return value
+	return value, true
 }
 
-func (d *Deque) PopBack() interface{} {
+func (d *Deque[T]) PopBack() (T, bool) {
 	if d.tail == nil {
-		return nil
+		var zero T
+		return zero, false
 	}
 
 	value := d.tail.Value
@@ -71,13 +73,13 @@ func (d *Deque) PopBack() interface{} {
 		d.tail.Next = nil
 	}
 	d.size--
-	return value
+	return value, true
 }
 
-func (d *Deque) Size() int {
+func (d *Deque[T]) Size() int {
 	return d.size
 }
 
-func (d *Deque) IsEmpty() bool {
+func (d *Deque[T]) IsEmpty() bool {
 	return d.size == 0
 }

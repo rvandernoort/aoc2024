@@ -7,9 +7,9 @@ import (
 	"rovervandernoort.nl/framework"
 )
 
-func createInitialChecksum(nums []int) *framework.Deque {
+func createInitialChecksum(nums []int) *framework.Deque[int] {
 	index := 0
-	checksum := framework.NewDeque()
+	checksum := framework.NewDeque[int]()
 	for i, num := range nums {
 		for j := 0; j < num; j++ {
 			if i%2 == 0 {
@@ -25,21 +25,21 @@ func createInitialChecksum(nums []int) *framework.Deque {
 	return checksum
 }
 
-func reorderChecksum(checksum framework.Deque) []int {
+func reorderChecksum(checksum framework.Deque[int]) []int {
 	newChecksum := make([]int, checksum.Size())
 	index := 0
 	for checksum.Size() > 0 {
-		front := checksum.PopFront().(int)
+		front, _ := checksum.PopFront()
 		if front == -1 {
 			if checksum.Size() == 0 {
 				break
 			}
-			back := checksum.PopBack().(int)
+			back, _ := checksum.PopBack()
 			for back == -1 {
 				if checksum.Size() == 0 {
 					break
 				}
-				back = checksum.PopBack().(int)
+				back, _ = checksum.PopBack()
 			}
 			if back == -1 {
 				break
@@ -67,81 +67,80 @@ func Part1(nums []int) (checksum int) {
 	return
 }
 
-// func Part1(blocks []int, empties []int, length int) (checksum int) {
-// 	index := 0
-// 	lastIndex := len(blocks)
-// 	for i := 0; i < length; i++ {
-// 		if i%2 == 0 {
-// 			for j := 0; j < blocks[i/2]; j++ {
-// 				checksum += index * i
-// 				index += 1
-// 			}
-// 		} else {
-// 			for j := 0; j < empties[(i-1)/2]; j++ {
-// 				checksum += lastIndex * i
-// 				index += 1
-// 			}
-// 		}
-// 	}
-// 	return
-// }
+func createFileSystem(blocks []int) framework.BlockDeque {
+	fs := framework.NewBlockDeque()
+	index := 0
+	num := 0
+	for i, block := range blocks {
+		fs.PushBack(framework.FsBlock{Size: block, StartIndex: index, Number: num})
+		index += block
+		if i%2 == 0 {
+			num = -1
+		} else {
+			num = (i + 1) / 2
+		}
+	}
+	return *fs
+}
 
-// func Part1(blocks []int, empties []int, length int) int {
-// 	checksum := 0
-// 	block_nr := 0
-// 	block_size := blocks[block_nr]
-// 	block_start := 1
-// 	block_type := "block"
-// 	end_block_nr := len(blocks)-1
-// 	end_block_size := blocks[end_block_nr]
-// 	block_end := 1
-// 	empty_nr := 0
-// 	empty_size := empties[empty_nr]
-// 	empty_start := 1
-// 	for i := 0; i < length; i++ {
-// 		if block_type == "block" {
-// 			checksum += i * block_nr
+func reorderFileSystem(fs framework.BlockDeque) (newFs framework.BlockDeque) {
+	for fs.Size() > 0 {
+		back, err := fs.PopBack()
+		if !err {
+			break
+		}
+		if back.Number == -1 || newFs.FirstValue() < back.Number {
+			newFs.PushFront(back)
+			continue
+		} else {
+			gap, i, err := fs.SearchFirstGap(back.Size)
+			if !err {
+				newFs.PushFront(back)
+				continue
+			}
+			if gap.Size > back.Size {
+				fs.InsertAt(i, framework.FsBlock{Size: gap.Size - back.Size, StartIndex: gap.StartIndex + back.Size, Number: -1})
+			}
+			//check at index to see if . blocks exists and extend either direction
+			//or paste a new . block in place of the number block
+			//no we need to change datastructure
 
-// 			if block_start == block_size {
-// 				block_nr++
-// 				block_size = blocks[block_nr]
-// 				block_start = 1
-// 				block_type = "empty"
-// 				continue
-// 			}
+			gap.Number = back.Number
+			gap.Size = back.Size
+			if gap.StartIndex+back.Size == back.StartIndex {
+				for fs.Size() > 0 {
+					back, err = fs.PopBack()
+					if !err {
+						return fs
+					}
+					newFs.PushFront(back)
+				}
+				return newFs
+			}
+		}
+	}
+	return newFs
+}
 
-// 			block_start++
-// 		} else if block_type == "empty" {
-// 			checksum += i * end_block_nr
+func calculateChecksumBlock(fs framework.BlockDeque) (checksum int) {
+	current, err := fs.PopFront()
+	for err {
+		if current.Number != -1 {
+			for i := 0; i < current.Size; i++ {
+				checksum += current.Number * (current.StartIndex + i)
+			}
+		}
+		current, err = fs.PopFront()
+	}
+	return
+}
 
-// 			if empty_start == empty_size {
-// 				empty_nr++
-// 				empty_size = empties[empty_nr]
-// 				empty_start = 1
-// 				block_type = "block"
-// 				continue
-// 			}
-
-// 			if block_end == end_block_size {
-// 				end_block_nr--
-// 				end_block_size = blocks[end_block_nr-1]
-// 				block_end = 1
-// 				block_type = "block"
-// 				continue
-// 			}
-
-// 			block_end++
-// 			empty_start++
-// 		}
-// 	}
-
-// 	return checksum
-// }
-
-// func Part2(nums []uint64, target uint64) uint64 {
-
-// 	return 0
-// }
+func Part2(blocks []int) (checksum int) {
+	fs := createFileSystem(blocks)
+	fs = reorderFileSystem(fs)
+	checksum = calculateChecksumBlock(fs)
+	return
+}
 
 func main() {
 	lines := framework.ReadData("input.txt")
@@ -153,10 +152,10 @@ func main() {
 	fmt.Printf("time: %v\n\n", time.Since(start))
 	fmt.Printf("output: %d\n", product)
 
-	// fmt.Printf("-----\nPart 2\n")
-	// start = time.Now()
-	// product = Part2(nums, target)
-	// fmt.Printf("time: %v\n\n", time.Since(start))
-	// fmt.Printf("output: %d\n", product)
+	fmt.Printf("-----\nPart 2\n")
+	start = time.Now()
+	product = Part2(blocks)
+	fmt.Printf("time: %v\n\n", time.Since(start))
+	fmt.Printf("output: %d\n", product)
 
 }
